@@ -17,6 +17,7 @@ def getValidFolderPath(folder_path):
 
 def getModelPath(config, mode):
     model_file_name_dict = {"train": "model_last.pth",
+                            "val": "model_best.pth",
                             "test": "model_best.pth"}
 
     log_dict = config['log']
