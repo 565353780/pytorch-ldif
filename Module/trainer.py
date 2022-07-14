@@ -95,19 +95,14 @@ class Trainer(Tester):
         torch.save(save_dict, save_path)
         return True
 
-    def compute_loss(self, data):
-        data = self.to_device(data)
-        est_data = self.model(data)
-        loss = self.model.loss(est_data, data)
-
     def train_step(self, data):
         self.optimizer.zero_grad()
 
         data = self.to_device(data)
         est_data = self.model(data)
 
-        self.addTrainLDIF(est_data['structured_implicit_activations'].to(self.test_device),
-                          est_data['sdf_est_data']['structured_implicit_activations'].to(self.test_device))
+        self.addTrainLDIF(est_data['structured_implicit_activations'].data,
+                          est_data['sdf_est_data']['structured_implicit_activations'].data)
 
         loss = self.model.loss(est_data, data)
         if loss['total'].requires_grad:
@@ -121,8 +116,8 @@ class Trainer(Tester):
         data = self.to_device(data)
         est_data = self.model(data)
 
-        self.addValLDIF(est_data['structured_implicit_activations'].to(self.test_device),
-                        est_data['sdf_est_data']['structured_implicit_activations'].to(self.test_device))
+        self.addValLDIF(est_data['structured_implicit_activations'].data,
+                        est_data['sdf_est_data']['structured_implicit_activations'].data)
 
         loss = self.model.loss(est_data, data)
         loss['total'] = loss['total'].item()
@@ -153,6 +148,8 @@ class Trainer(Tester):
         iter = -1
         for data in tqdm(self.train_dataloader):
             iter += 1
+            if iter > 10:
+                break
             loss = self.train_step(data)
             loss_recorder.update_loss(loss)
 
