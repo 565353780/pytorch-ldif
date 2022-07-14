@@ -10,9 +10,10 @@ from torch.optim import lr_scheduler
 from Config.configs import LDIF_CONFIG
 
 from Method.paths import getModelPath
-from Method.dataloaders import LDIF_dataloader
-from Method.models import LDIF
 from Method.optimizers import load_optimizer, load_scheduler
+
+from DataLoader.ldif import LDIF_dataloader
+from Model.ldif import LDIF
 
 from Module.loss_recorder import LossRecorder
 from Module.base_loader import BaseLoader

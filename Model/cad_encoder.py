@@ -4,7 +4,7 @@
 import torch
 import torch.nn as nn
 
-from Method.ldif_encoder.model import LDIFEncoder
+from Model.ldif_encoder import LDIFEncoder
 
 class ResNetBlock(nn.Module):
     def __init__(self, num_channels, kernel_size=3, stride=1, layer=nn.Conv3d,

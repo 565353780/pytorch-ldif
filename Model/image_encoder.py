@@ -5,7 +5,8 @@ import torch.nn as nn
 import torch.utils.model_zoo as model_zoo
 
 from Method.resnet import resnet18_full, model_urls
-from Method.ldif_encoder.model import LDIFEncoder
+
+from Model.ldif_encoder import LDIFEncoder
 
 def weights_init(m):
     classname = m.__class__.__name__

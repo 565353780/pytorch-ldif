@@ -7,8 +7,9 @@ from tqdm import tqdm
 from Config.configs import LDIF_CONFIG
 
 from Method.paths import getModelPath
-from Method.models import LDIF
-from Method.dataloaders import LDIF_dataloader
+
+from DataLoader.ldif import LDIF_dataloader
+from Model.ldif import LDIF
 
 from Module.base_loader import BaseLoader
 
@@ -21,6 +22,7 @@ class Detector(BaseLoader):
 
     def loadModel(self, model):
         self.model = model(self.config, 'test')
+        self.model.to(self.device)
 
         model_path = getModelPath(self.config)
         if model_path is None:
@@ -30,7 +32,6 @@ class Detector(BaseLoader):
 
         state_dict = torch.load(model_path)
         self.model.load_state_dict(state_dict['model'])
-        self.model.to(self.device)
         return True
 
     def initEnv(self, config, model):

@@ -4,7 +4,7 @@
 from torch.utils.data import DataLoader
 from torch.utils.data.dataloader import default_collate
 
-from Method.ldif.dataset import LDIF_Dataset
+from Dataset.ldif import LDIF_Dataset
 
 def LDIF_collate_fn(batch):
     """

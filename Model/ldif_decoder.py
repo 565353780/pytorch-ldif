@@ -6,8 +6,9 @@ import numpy as np
 import torch.nn as nn
 
 from Method.sdf import reconstruction
-from Method.sif.model import StructuredImplicit
-from Method.occnet.model import OccNetDecoder
+
+from Model.sif import StructuredImplicit
+from Model.occnet_decoder import OccNetDecoder
 
 def weights_init(m):
     classname = m.__class__.__name__

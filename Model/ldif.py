@@ -4,10 +4,11 @@
 import torch
 import torch.nn as nn
 
-from Method.image_encoder.model import ImageLDIFEncoder
-from Method.cad_encoder.model import CADLDIFEncoder
-from Method.ldif_decoder.model import LDIFDecoder
-from Method.ldif.loss import LDIFLoss
+from Model.image_encoder import ImageLDIFEncoder
+from Model.cad_encoder import CADLDIFEncoder
+from Model.ldif_decoder import LDIFDecoder
+
+from Loss.ldif import LDIFLoss
 
 class LDIF(nn.Module):
     def __init__(self, config, mode):
