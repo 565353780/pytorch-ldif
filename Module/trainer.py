@@ -12,7 +12,6 @@ from Config.configs import LDIF_CONFIG
 from Method.optimizers import load_optimizer, load_scheduler
 
 from DataLoader.ldif import LDIF_dataloader
-from Model.ldif import LDIF
 
 from Module.loss_recorder import LossRecorder
 from Module.detector import Detector
