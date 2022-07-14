@@ -93,8 +93,8 @@ class RetrievalMetric(object):
         train_diag = np.diag(self.train_distance_matrix)
         val_diag = np.diag(self.val_distance_matrix)
 
-        metric_dict['train_retrieval_dist'] = train_diag.norm()
-        metric_dict['val_retrieval_dist'] = val_diag.norm()
+        metric_dict['train_retrieval_dist'] = train_diag.sum()
+        metric_dict['val_retrieval_dist'] = val_diag.sum()
 
         train_retrieval_idx_array = np.argmin(self.train_distance_matrix, axis=1)
         val_retrieval_idx_array = np.argmin(self.val_distance_matrix, axis=1)
