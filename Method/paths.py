@@ -7,12 +7,6 @@ def getValidFolderPath(folder_path):
     valid_folder_path = folder_path
     if valid_folder_path[-1] != "/":
         valid_folder_path += "/"
-
-    if not os.path.exists(valid_folder_path):
-        print("[ERROR][paths::getValidFolderPath]")
-        print("\t folder not exist!")
-        print("\t " + folder_path)
-        return None
     return valid_folder_path
 
 def getModelPath(config, mode):
