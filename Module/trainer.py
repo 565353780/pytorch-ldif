@@ -13,12 +13,12 @@ from Method.optimizers import load_optimizer, load_scheduler
 
 from DataLoader.ldif import LDIF_dataloader
 
+from Metric.retrieval import RetrievalMetric
+
 from Module.loss_recorder import LossRecorder
 from Module.detector import Detector
-from Module.tester import Tester
 
-#  class Trainer(Detector):
-class Trainer(Tester):
+class Trainer(Detector):
     def __init__(self):
         super(Trainer, self).__init__()
 
@@ -26,6 +26,8 @@ class Trainer(Tester):
         self.test_dataloader = None
         self.optimizer = None
         self.scheduler = None
+
+        self.retrieval_metric = RetrievalMetric()
         return
 
     def initWandb(self):
@@ -101,8 +103,8 @@ class Trainer(Tester):
         data = self.to_device(data)
         est_data = self.model(data)
 
-        self.addTrainLDIF(est_data['structured_implicit_activations'].data,
-                          est_data['sdf_est_data']['structured_implicit_activations'].data)
+        self.retrieval_metric.addTrainLDIF(est_data['structured_implicit_activations'],
+                                         est_data['sdf_est_data']['structured_implicit_activations'])
 
         loss = self.model.loss(est_data, data)
         if loss['total'].requires_grad:
@@ -116,8 +118,8 @@ class Trainer(Tester):
         data = self.to_device(data)
         est_data = self.model(data)
 
-        self.addValLDIF(est_data['structured_implicit_activations'].data,
-                        est_data['sdf_est_data']['structured_implicit_activations'].data)
+        self.retrieval_metric.addValLDIF(est_data['structured_implicit_activations'],
+                                       est_data['sdf_est_data']['structured_implicit_activations'])
 
         loss = self.model.loss(est_data, data)
         loss['total'] = loss['total'].item()
@@ -148,8 +150,6 @@ class Trainer(Tester):
         iter = -1
         for data in tqdm(self.train_dataloader):
             iter += 1
-            if iter > 10:
-                break
             loss = self.train_step(data)
             loss_recorder.update_loss(loss)
 
@@ -201,7 +201,8 @@ class Trainer(Tester):
             step = self.train_epoch(epoch + 1, step)
             eval_loss_recorder = self.val_epoch()
 
-            self.computeRetrieval()
+            retrieval_metric = self.retrieval_metric.getRetrievalMetric()
+            wandb.log(retrieval_metric, step=epoch)
 
             eval_loss = eval_loss_recorder['total'].avg
             if isinstance(self.scheduler, lr_scheduler.ReduceLROnPlateau):
