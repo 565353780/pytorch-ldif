@@ -26,23 +26,15 @@ class Detector(object):
         log_dict = self.config['log']
         if 'resume_path' in log_dict.keys():
             valid_resume_path = getValidFolderPath(log_dict['resume_path'])
-            if valid_resume_path is None:
-                print("[ERROR][Detector::loadConfig]")
-                print("\t resume_path not exist!")
-            else:
-                self.config['log']['resume_path'] = valid_resume_path
+            self.config['log']['resume_path'] = valid_resume_path
 
         if 'path' in log_dict.keys():
             valid_path = getValidFolderPath(log_dict['path'])
-            if valid_path is None:
-                print("[ERROR][Detector::loadConfig]")
-                print("\t path not exist!")
-            else:
-                self.config['log']['path'] = valid_path
-                os.makedirs(valid_path, exist_ok=True)
-                name = log_dict['name']
-                log_save_path = valid_path + name + "/"
-                os.makedirs(log_save_path, exist_ok=True)
+            self.config['log']['path'] = valid_path
+            os.makedirs(valid_path, exist_ok=True)
+            name = log_dict['name']
+            log_save_path = valid_path + name + "/"
+            os.makedirs(log_save_path, exist_ok=True)
             return True
 
     def loadDevice(self):
