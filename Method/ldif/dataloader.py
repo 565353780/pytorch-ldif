@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import horovod.torch as hvd
 from torch.utils.data import DataLoader
-from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data.dataloader import default_collate
 
 from Method.ldif.dataset import LDIF_Dataset
@@ -34,16 +32,5 @@ def LDIF_dataloader(config, mode='train'):
                             batch_size=config[mode]['batch_size'],
                             shuffle=(mode == 'train'),
                             collate_fn=LDIF_collate_fn)
-    return dataloader
-
-def HVD_LDIF_dataloader(config, mode='train'):
-    dataset = LDIF_Dataset(config, mode)
-    sampler = DistributedSampler(dataset, num_replicas=hvd.size(), rank=hvd.rank())
-
-    dataloader = DataLoader(dataset=dataset,
-                            num_workers=config['device']['num_workers'],
-                            batch_size=config[mode]['batch_size'],
-                            collate_fn=LDIF_collate_fn,
-                            sampler=sampler)
     return dataloader
 

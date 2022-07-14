@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import torch
-import horovod.torch as hvd
 
 def has_optim_in_children(subnet):
     for module in subnet.children():
@@ -39,7 +38,7 @@ def load_optimizer(config, net):
         '''collect parameters with specific optimizer spec'''
         for module in module_optim_pairs:
             optim_params.append({'params': filter(lambda p: p.requires_grad, module['module'].parameters()),
-                                 'lr': float(module['optim_spec']['lr']) * hvd.size(),
+                                 'lr': float(module['optim_spec']['lr']),
                                  'betas': tuple(module['optim_spec']['betas']),
                                  'eps': float(module['optim_spec']['eps']),
                                  'weight_decay': float(module['optim_spec']['weight_decay'])})
@@ -53,7 +52,7 @@ def load_optimizer(config, net):
 
         '''define optimizer'''
         optimizer = torch.optim.Adam(optim_params,
-                                     lr=float(default_optim_spec['lr']) * hvd.size(),
+                                     lr=float(default_optim_spec['lr']),
                                      betas=tuple(default_optim_spec['betas']),
                                      eps=float(default_optim_spec['eps']),
                                      weight_decay=float(default_optim_spec['weight_decay']))
@@ -62,7 +61,7 @@ def load_optimizer(config, net):
     # use SGD optimizer.
     for module in module_optim_pairs:
         optim_params.append({'params': filter(lambda p: p.requires_grad, module['module'].parameters()),
-                             'lr': float(module['optim_spec']['lr']) * hvd.size()})
+                             'lr': float(module['optim_spec']['lr'])})
 
     other_params = list()
     for module in other_modules:
@@ -70,7 +69,7 @@ def load_optimizer(config, net):
 
     optim_params.append({'params': filter(lambda p: p.requires_grad, other_params)})
     optimizer = torch.optim.SGD(optim_params,
-                                lr=float(config['optimizer']['lr']) * hvd.size(),
+                                lr=float(config['optimizer']['lr']),
                                 momentum=0.9)
     return optimizer
 
