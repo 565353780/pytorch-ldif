@@ -134,7 +134,6 @@ class Trainer(Detector):
         print("[INFO][Trainer::outputLoss]")
         for loss_name, loss_value in loss_recorder.loss_recorder.items():
             print("\t", loss_name, loss_value.avg)
-        print('=' * 10)
         return True
 
     def train_epoch(self, epoch, step):
