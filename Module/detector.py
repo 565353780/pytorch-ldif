@@ -99,12 +99,17 @@ class Detector(object):
         return True
 
     def encodeImage(self, image, size_cls):
+        image = image.to(self.device)
+        size_cls = size_cls.to(self.device)
         return self.model.encodeImage(image, size_cls)
 
     def encodeSDF(self, grid, size_cls):
+        grid = grid.to(self.device)
+        size_cls = size_cls.to(self.device)
         return self.model.encodeSDF(grid, size_cls)
 
     def decodeLDIF(self, structured_implicit_activations):
+        structured_implicit_activations = structured_implicit_activations.to(self.device)
         return self.model.decodeLDIF(structured_implicit_activations)
 
     def detect(self, data):
@@ -125,14 +130,14 @@ def demo():
 
         print("==== image_encode ====")
         print("image_ldif.shape =", image_ldif.shape)
-        print("image_ldif_sdf.shape =", image_ldif_sdf)
+        print("image_ldif_sdf.shape =", image_ldif_sdf['sdf'].shape)
 
         sdf_ldif = detector.encodeSDF(data['grid'], data['cls'])
         sdf_ldif_sdf = detector.decodeLDIF(sdf_ldif)
 
         print("==== sdf_encode ====")
         print("sdf_ldif.shape =", sdf_ldif.shape)
-        print("sdf_ldif_sdf.shape =", sdf_ldif_sdf)
+        print("sdf_ldif_sdf.shape =", sdf_ldif_sdf['sdf'].shape)
 
         result = detector.detect(data)
 

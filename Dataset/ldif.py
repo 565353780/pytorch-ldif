@@ -114,7 +114,8 @@ class LDIF_Dataset(PIX3DLDIF):
             sample['uniform_class'] = (uniform_samples[:, 3:] > 0).astype(np.float32)
             sample['uniform_samples'] = uniform_samples[:, :3]
 
-            sample['world2grid'], sample['grid'] = file_util.read_grd(sample_info['coarse_grid_path'])
+        # FIXME: use unit sdf instead of this grid
+        sample['world2grid'], sample['grid'] = file_util.read_grd(sample_info['coarse_grid_path'])
 
         sample.update(sample_info)
         return sample
