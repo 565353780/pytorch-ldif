@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 
 from Model.image_encoder import ImageLDIFEncoder
-from Model.cad_encoder import CADLDIFEncoder
+from Model.sdf_encoder import SDFLDIFEncoder
 from Model.ldif_decoder import LDIFDecoder
 
 from Loss.ldif import LDIFLoss
@@ -13,14 +13,14 @@ from Loss.ldif import LDIFLoss
 class LDIF(nn.Module):
     def __init__(self, config, mode):
         super(LDIF, self).__init__()
-        n_classes = 9
+        self.n_classes = 9
 
         self.config = config
         self.mode = mode
 
-        self.image_encoder = ImageLDIFEncoder(config, n_classes)
+        self.image_encoder = ImageLDIFEncoder(config, self.n_classes)
 
-        self.cad_encoder = CADLDIFEncoder(config, n_classes)
+        self.sdf_encoder = SDFLDIFEncoder(config, self.n_classes)
 
         self.ldif_decoder = LDIFDecoder(config)
 
@@ -40,9 +40,13 @@ class LDIF(nn.Module):
         encode_dict = self.image_encoder.forward(image, size_cls)
         return encode_dict['structured_implicit_activations']
 
-    def encodeCAD(self, grid, size_cls):
-        encode_dict = self.cad_encoder.forward(grid, size_cls)
+    def encodeSDF(self, grid, size_cls):
+        encode_dict = self.sdf_encoder.forward(grid, size_cls)
         return encode_dict['structured_implicit_activations']
+
+    def decodeLDIF(self, structured_implicit_activations):
+        return_dict = self.ldif_decoder.forward(structured_implicit_activations)
+        return return_dict
 
     def mesh_reconstruction(self, image, size_cls, samples=None):
         return_dict = self.image_encoder.forward(image, size_cls)
@@ -62,7 +66,7 @@ class LDIF(nn.Module):
         est_data['near_surface_class'] = est_data['global_decisions'][:, :len_near_surface, ...]
         est_data['uniform_class'] = est_data['global_decisions'][:, len_near_surface:, ...]
 
-        cad_ldif_encoder = self.cad_encoder.forward(data['grid'], data['cls'])
+        cad_ldif_encoder = self.sdf_encoder.forward(data['grid'], data['cls'])
         cad_est_data = self.ldif_decoder.forward(cad_ldif_encoder['structured_implicit_activations'], samples)
         cad_est_data['near_surface_class'] = cad_est_data['global_decisions'][:, :len_near_surface, ...]
         cad_est_data['uniform_class'] = cad_est_data['global_decisions'][:, len_near_surface:, ...]

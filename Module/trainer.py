@@ -9,22 +9,20 @@ from torch.optim import lr_scheduler
 
 from Config.configs import LDIF_CONFIG
 
-from Method.paths import getModelPath
 from Method.optimizers import load_optimizer, load_scheduler
 
 from DataLoader.ldif import LDIF_dataloader
 from Model.ldif import LDIF
 
 from Module.loss_recorder import LossRecorder
-from Module.base_loader import BaseLoader
+from Module.detector import Detector
 
-class Trainer(BaseLoader):
+class Trainer(Detector):
     def __init__(self):
         super(Trainer, self).__init__()
 
         self.train_dataloader = None
         self.test_dataloader = None
-        self.model = None
         self.optimizer = None
         self.scheduler = None
         return
@@ -42,50 +40,38 @@ class Trainer(BaseLoader):
         wandb.summary['ppid'] = os.getppid()
         return True
 
-    def loadDataset(self, dataloader):
-        self.train_dataloader = dataloader(self.config, 'train')
-        self.test_dataloader = dataloader(self.config, 'val')
+    def loadDataset(self):
+        self.train_dataloader = LDIF_dataloader(self.config, 'train')
+        self.test_dataloader = LDIF_dataloader(self.config, 'val')
         return True
 
-    def loadModel(self, model):
-        self.model = model(self.config, 'train')
-        self.model.to(self.device)
-
+    def loadOptimizer(self):
         self.optimizer = load_optimizer(self.config, self.model)
         self.scheduler = load_scheduler(self.config, self.optimizer)
 
-        model_path = getModelPath(self.config)
-        if model_path is None:
-            print("[INFO][Trainer::loadModel]")
-            print("\t trained model not found, start training from 0 epoch...")
-        else:
-            state_dict = torch.load(model_path)
-            self.model.load_state_dict(state_dict['model'])
-            self.optimizer.load_state_dict(state_dict['optimizer'])
-            self.scheduler.load_state_dict(state_dict['scheduler'])
+        if self.state_dict is not None:
+            self.optimizer.load_state_dict(self.state_dict['optimizer'])
+            self.scheduler.load_state_dict(self.state_dict['scheduler'])
 
         wandb.watch(self.model, log=None)
         return True
 
-    def initEnv(self, config, dataloader, model):
-        if not self.loadConfig(config):
-            print("[ERROR][Trainer::initEnv]")
-            print("\t loadConfig failed!")
+    def initTrainEnv(self, config):
+        if not self.initEnv(config, 'train'):
+            print("[ERROR][Trainer::initTrainEnv]")
+            print("\t initEnv failed!")
             return False
+
         if not self.initWandb():
-            print("[ERROR][Trainer::initEnv]")
+            print("[ERROR][Trainer::initTrainEnv]")
             print("\t initWandb failed!")
             return False
-        if not self.loadDevice():
-            print("[ERROR][Trainer::initEnv]")
+        if not self.loadDataset():
+            print("[ERROR][Trainer::initTrainEnv]")
             print("\t loadDevice failed!")
             return False
-        if not self.loadDataset(dataloader):
-            print("[ERROR][Trainer::initEnv]")
-            print("\t loadDevice failed!")
-            return False
-        if not self.loadModel(model):
-            print("[ERROR][Trainer::initEnv]")
+        if not self.loadOptimizer():
+            print("[ERROR][Trainer::initTrainEnv]")
             print("\t loadModel failed!")
             return False
         return True
@@ -111,9 +97,7 @@ class Trainer(BaseLoader):
     def compute_loss(self, data):
         data = self.to_device(data)
         est_data = self.model(data)
-
-        loss = self.model.loss(est_data, data)
-        return loss
+        return self.model.loss(est_data, data)
 
     def train_step(self, data):
         self.optimizer.zero_grad()
@@ -233,11 +217,9 @@ class Trainer(BaseLoader):
 
 def demo():
     config = LDIF_CONFIG
-    dataloader = LDIF_dataloader
-    model = LDIF
 
     trainer = Trainer()
-    trainer.initEnv(config, dataloader, model)
+    trainer.initTrainEnv(config)
     trainer.train()
     return True
 

@@ -83,6 +83,7 @@ class LDIF_Dataset(PIX3DLDIF):
                 transforms.ToTensor(),
                 transforms.Normalize(mean, std)
             ])
+        return
 
     def __getitem__(self, index):
         sample_info = self.split[index]
