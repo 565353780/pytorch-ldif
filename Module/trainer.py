@@ -202,7 +202,11 @@ class Trainer(Detector):
             eval_loss_recorder = self.val_epoch()
 
             retrieval_metric = self.retrieval_metric.getRetrievalMetric()
-            wandb.log(retrieval_metric, step=epoch)
+            print("[INFO][Trainer::train]")
+            print("\t RetrievalMetric")
+            for key, item in retrieval_metric.items():
+                print("\t\t", key, "=", item)
+            wandb.log(retrieval_metric)
 
             eval_loss = eval_loss_recorder['total'].avg
             if isinstance(self.scheduler, lr_scheduler.ReduceLROnPlateau):
