@@ -5,7 +5,7 @@ import os
 import torch
 from tqdm import tqdm
 
-from Config.configs import LDIF_CONFIG
+from Config.ldif import LDIF_CONFIG
 
 from Method.paths import getValidFolderPath, getModelPath
 

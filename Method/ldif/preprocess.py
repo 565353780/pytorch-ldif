@@ -10,7 +10,8 @@ import numpy as np
 from PIL import Image
 from multiprocessing import Pool
 
-from Config.configs import PIX3DConfig, ShapeNetConfig
+from Config.pix3d import PIX3DConfig
+from Config.shapenet import ShapeNetConfig
 
 from Method.preprocess import normalize, remove_if_exists
 

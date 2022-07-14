@@ -7,7 +7,7 @@ import torch
 from tqdm import tqdm
 from torch.optim import lr_scheduler
 
-from Config.configs import LDIF_CONFIG
+from Config.ldif import LDIF_CONFIG
 
 from Method.optimizers import load_optimizer, load_scheduler
 

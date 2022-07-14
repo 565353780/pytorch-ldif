@@ -14,7 +14,7 @@ from tqdm import tqdm
 
 from external.ldif.util import gaps_util, file_util
 
-from Config.configs import PIX3DConfig
+from Config.pix3d import PIX3DConfig
 
 class PIX3DLDIF(Dataset):
     def __init__(self, config, mode):
