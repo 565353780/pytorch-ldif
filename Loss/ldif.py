@@ -59,14 +59,14 @@ class LDIFLoss(object):
     def __call__(self, est_data, gt_data):
         loss = self.getLoss(est_data, gt_data)
 
-        if 'cad_est_data' not in est_data.keys():
+        if 'sdf_est_data' not in est_data.keys():
             return loss
 
-        cad_loss = self.getLoss(est_data['cad_est_data'], gt_data)
+        sdf_loss = self.getLoss(est_data['sdf_est_data'], gt_data)
 
-        loss['cad_uniform_sample_loss'] = cad_loss['uniform_sample_loss']
-        loss['cad_near_surface_sample_loss'] = cad_loss['near_surface_sample_loss']
-        loss['cad_fixed_bounding_box_loss'] = cad_loss['fixed_bounding_box_loss']
-        loss['cad_lowres_grid_inside_loss'] = cad_loss['lowres_grid_inside_loss']
+        loss['sdf_uniform_sample_loss'] = sdf_loss['uniform_sample_loss']
+        loss['sdf_near_surface_sample_loss'] = sdf_loss['near_surface_sample_loss']
+        loss['sdf_fixed_bounding_box_loss'] = sdf_loss['fixed_bounding_box_loss']
+        loss['sdf_lowres_grid_inside_loss'] = sdf_loss['lowres_grid_inside_loss']
         return loss
 
