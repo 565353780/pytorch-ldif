@@ -20,7 +20,6 @@ DATA = {
 }
 
 MODEL = {
-    'method': 'LDIF',
     'bottleneck_size': 1536,
     'element_count': 32,
     'sym_element_count': 16,
@@ -63,13 +62,13 @@ TEST = {
 
 LOG = {
     'project': 'LDIF',
-    'name': '20220714_1237',
+    'name': '20220714_1604',
     'vis_path': 'visualization',
     'save_results': True,
     'vis_step': 100,
     'print_step': 50,
     'save_checkpoint': True,
-    'resume_path': './out/ldif/20220714_1237/',
+    'resume_path': './out/ldif/20220714_1604/',
     'path': './out/ldif/',
 }
 
