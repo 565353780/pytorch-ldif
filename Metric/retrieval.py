@@ -107,6 +107,16 @@ class RetrievalMetric(object):
         metric_dict['train_retrieval_accuracy'] = 1.0 * train_match_num / train_match_idx_array.shape[0]
         metric_dict['val_retrieval_accuracy'] = 1.0 * val_match_num / val_match_idx_array.shape[0]
 
+        train_rank_list = [
+            np.sum(self.train_distance_matrix[i] > self.train_distance_matrix[i][i])
+            for i in range(self.train_distance_matrix.shape[0])]
+        val_rank_list = [
+            np.sum(self.val_distance_matrix[i] > self.val_distance_matrix[i][i])
+            for i in range(self.val_distance_matrix.shape[0])]
+
+        metric_dict['train_rank_mean'] = np.mean(train_rank_list)
+        metric_dict['val_rank_mean'] = np.mean(val_rank_list)
+
         self.resetLDIF()
         return metric_dict
 
