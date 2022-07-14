@@ -156,6 +156,3 @@ def demo():
                 continue
     return True
 
-if __name__ == "__main__":
-    demo()
-
