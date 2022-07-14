@@ -6,17 +6,10 @@ import numpy as np
 import torch.nn as nn
 
 from Method.sdf import reconstruction
+from Method.weights import weights_init
 
 from Model.sif import StructuredImplicit
 from Model.occnet_decoder import OccNetDecoder
-
-def weights_init(m):
-    classname = m.__class__.__name__
-    if classname.find('Conv') != -1:
-        m.weight.data.normal_(0.0, 0.02)
-    elif classname.find('BatchNorm') != -1:
-        m.weight.data.normal_(1.0, 0.02)
-        m.bias.data.fill_(0)
 
 class LDIFDecoder(nn.Module):
     def __init__(self, config):
