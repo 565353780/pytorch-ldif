@@ -48,6 +48,8 @@ class Trainer(BaseLoader):
 
     def loadModel(self, model):
         self.model = model(self.config, 'train')
+        self.model.to(self.device)
+
         self.optimizer = load_optimizer(self.config, self.model)
         self.scheduler = load_scheduler(self.config, self.optimizer)
 
@@ -61,7 +63,6 @@ class Trainer(BaseLoader):
             self.optimizer.load_state_dict(state_dict['optimizer'])
             self.scheduler.load_state_dict(state_dict['scheduler'])
 
-        self.model.to(self.device)
         wandb.watch(self.model, log=None)
         return True
 
