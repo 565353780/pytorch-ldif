@@ -15,8 +15,10 @@ from DataLoader.ldif import LDIF_dataloader
 
 from Module.loss_recorder import LossRecorder
 from Module.detector import Detector
+from Module.tester import Tester
 
-class Trainer(Detector):
+#  class Trainer(Detector):
+class Trainer(Tester):
     def __init__(self):
         super(Trainer, self).__init__()
 
@@ -96,11 +98,18 @@ class Trainer(Detector):
     def compute_loss(self, data):
         data = self.to_device(data)
         est_data = self.model(data)
-        return self.model.loss(est_data, data)
+        loss = self.model.loss(est_data, data)
 
     def train_step(self, data):
         self.optimizer.zero_grad()
-        loss = self.compute_loss(data)
+
+        data = self.to_device(data)
+        est_data = self.model(data)
+
+        self.addTrainLDIF(est_data['structured_implicit_activations'].to(self.test_device),
+                          est_data['sdf_est_data']['structured_implicit_activations'].to(self.test_device))
+
+        loss = self.model.loss(est_data, data)
         if loss['total'].requires_grad:
             loss['total'].backward()
             self.optimizer.step()
@@ -109,7 +118,13 @@ class Trainer(Detector):
         return loss
 
     def val_step(self, data):
-        loss = self.compute_loss(data)
+        data = self.to_device(data)
+        est_data = self.model(data)
+
+        self.addValLDIF(est_data['structured_implicit_activations'].to(self.test_device),
+                        est_data['sdf_est_data']['structured_implicit_activations'].to(self.test_device))
+
+        loss = self.model.loss(est_data, data)
         loss['total'] = loss['total'].item()
         return loss
 
@@ -189,6 +204,8 @@ class Trainer(Detector):
             step = self.train_epoch(epoch + 1, step)
             eval_loss_recorder = self.val_epoch()
 
+            self.computeRetrieval()
+
             eval_loss = eval_loss_recorder['total'].avg
             if isinstance(self.scheduler, lr_scheduler.ReduceLROnPlateau):
                 self.scheduler.step(eval_loss)
@@ -221,7 +238,4 @@ def demo():
     trainer.initTrainEnv(config)
     trainer.train()
     return True
-
-if __name__ == "__main__":
-    demo()
 
