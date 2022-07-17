@@ -10,6 +10,7 @@ from torch.optim import lr_scheduler
 from Config.ldif import LDIF_CONFIG
 
 from Method.optimizers import load_optimizer, load_scheduler
+from Method.optimizers import load_simple_optimizer
 
 from DataLoader.ldif import LDIF_dataloader
 
@@ -49,7 +50,8 @@ class Trainer(Detector):
         return True
 
     def loadOptimizer(self):
-        self.optimizer = load_optimizer(self.config, self.model)
+        #  self.optimizer = load_optimizer(self.config, self.model)
+        self.optimizer = load_simple_optimizer(self.config, self.model)
         self.scheduler = load_scheduler(self.config, self.optimizer)
 
         if self.state_dict is not None:

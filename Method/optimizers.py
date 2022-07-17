@@ -28,6 +28,15 @@ def find_optim_module(net):
         other_modules += child_other_modules
     return module_optim_pairs, other_modules
 
+def load_simple_optimizer(config, net):
+    optimizer_config = config['optimizer']
+    optimizer = torch.optim.Adam(net.parameters(),
+                                 lr=float(optimizer_config['lr']),
+                                 betas=tuple(optimizer_config['betas']),
+                                 eps=float(optimizer_config['eps']),
+                                 weight_decay=float(optimizer_config['weight_decay']))
+    return optimizer
+
 def load_optimizer(config, net):
     module_optim_pairs, other_modules = find_optim_module(net)
     default_optim_spec = config['optimizer']
