@@ -200,3 +200,6 @@ __pycache__
 *.mat
 *.ply
 
+# LargeVis output
+annoy_index_file
+
