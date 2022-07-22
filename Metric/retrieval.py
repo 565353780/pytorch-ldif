@@ -53,7 +53,7 @@ class RetrievalMetric(object):
         self.train_image_ldif_list += image_ldif_np
         self.train_sdf_ldif_list += sdf_ldif_np
 
-        self.train_ldif_class_list += list(class_id)
+        self.train_ldif_class_list += class_id.numpy().tolist()
         return True
 
     def addValLDIF(self, image_ldif, sdf_ldif, class_id):
@@ -62,7 +62,7 @@ class RetrievalMetric(object):
         self.val_image_ldif_list += image_ldif_np
         self.val_sdf_ldif_list += sdf_ldif_np
 
-        self.val_ldif_class_list += list(class_id)
+        self.val_ldif_class_list += class_id.numpy().tolist()
         return True
 
     def transToMatrix(self):
@@ -150,14 +150,14 @@ class RetrievalMetric(object):
 
         with open(save_file_path.replace(".txt", "_label.txt"), "w") as f:
             for label in label_list:
-                f.write(str(label) + "\n")
+                f.write(str(int(label)) + "\n")
         return True
 
     def saveLDIFForLargeVis(self, save_folder_path):
         if save_folder_path[-1] != "/":
             save_folder_path += "/"
 
-        os.makedirs(save_folder_path)
+        os.makedirs(save_folder_path, exist_ok=True)
 
         self.saveLDIFList(self.train_image_ldif_list,
                           self.train_ldif_class_list,
