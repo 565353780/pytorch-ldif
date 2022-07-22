@@ -25,7 +25,6 @@ class LargeVis(object):
             return False
 
         output_file_path = file_path.replace(".txt", "_2d.txt")
-
         if os.path.exists(output_file_path):
             return True
 
@@ -41,10 +40,17 @@ class LargeVis(object):
         return True
 
     def visualFile(self, file_path):
+        print("[INFO][LargeVis::visualFile]")
+        print("\t start transDataTo2D for " + file_path + "...")
+
         if not self.transDataTo2D(file_path):
             print("[ERROR][LargeVis::visualFile]")
             print("\t transDataTo2D failed!")
             return False
+
+        output_file_path = file_path.replace(".txt", "_plot.png")
+        if os.path.exists(output_file_path):
+            return True
 
         cmd = "python ./Method/plot.py" + \
             " -input " + file_path.replace(".txt", "_2d.txt") + \
@@ -60,6 +66,16 @@ def demo():
     large_vis = LargeVis("/home/chli/github/LargeVis/Linux/LargeVis", 24)
 
     large_vis.visualFile("./out/LargeVis/train_image_ldif.txt")
+    large_vis.visualFile("./out/LargeVis/train_sdf_ldif.txt")
+    large_vis.visualFile("./out/LargeVis/train_image_sdf_ldif.txt")
+
+    large_vis.visualFile("./out/LargeVis/val_image_ldif.txt")
+    large_vis.visualFile("./out/LargeVis/val_sdf_ldif.txt")
+    large_vis.visualFile("./out/LargeVis/val_image_sdf_ldif.txt")
+
+    large_vis.visualFile("./out/LargeVis/train_val_image_ldif.txt")
+    large_vis.visualFile("./out/LargeVis/train_val_sdf_ldif.txt")
+    large_vis.visualFile("./out/LargeVis/train_val_image_sdf_ldif.txt")
     return True
 
 if __name__ == "__main__":
