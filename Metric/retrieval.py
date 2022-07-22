@@ -53,7 +53,7 @@ class RetrievalMetric(object):
         self.train_image_ldif_list += image_ldif_np
         self.train_sdf_ldif_list += sdf_ldif_np
 
-        self.train_ldif_class_list += class_id
+        self.train_ldif_class_list += list(class_id)
         return True
 
     def addValLDIF(self, image_ldif, sdf_ldif, class_id):
@@ -62,7 +62,7 @@ class RetrievalMetric(object):
         self.val_image_ldif_list += image_ldif_np
         self.val_sdf_ldif_list += sdf_ldif_np
 
-        self.val_ldif_class_list += class_id
+        self.val_ldif_class_list += list(class_id)
         return True
 
     def transToMatrix(self):
