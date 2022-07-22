@@ -106,7 +106,8 @@ class Trainer(Detector):
         est_data = self.model(data)
 
         self.retrieval_metric.addTrainLDIF(est_data['structured_implicit_activations'],
-                                         est_data['sdf_est_data']['structured_implicit_activations'])
+                                           est_data['sdf_est_data']['structured_implicit_activations'],
+                                           data['class_id'])
 
         loss = self.model.loss(est_data, data)
         if loss['total'].requires_grad:
@@ -121,7 +122,8 @@ class Trainer(Detector):
         est_data = self.model(data)
 
         self.retrieval_metric.addValLDIF(est_data['structured_implicit_activations'],
-                                       est_data['sdf_est_data']['structured_implicit_activations'])
+                                         est_data['sdf_est_data']['structured_implicit_activations'],
+                                         data['class_id'])
 
         loss = self.model.loss(est_data, data)
         loss['total'] = loss['total'].item()
