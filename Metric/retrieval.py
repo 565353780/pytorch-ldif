@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 import numpy as np
 from scipy.spatial.distance import cdist
 
@@ -117,6 +118,53 @@ class RetrievalMetric(object):
         metric_dict['train_rank_mean'] = np.mean(train_rank_list)
         metric_dict['val_rank_mean'] = np.mean(val_rank_list)
 
+        self.saveLDIFForLargeVis("./out/LargeVis/")
+
         self.resetLDIF()
         return metric_dict
+
+    def saveLDIFList(self, ldif_list, save_file_path):
+        with open(save_file_path, "w") as f:
+            ldif_num = len(ldif_list)
+            ldif_length = len(ldif_list[0])
+
+            f.write(str(ldif_num) + " " + str(ldif_length) + "\n")
+
+            for ldif in ldif_list:
+                ldif_str = ""
+                for ldif_value in ldif:
+                    ldif_str += str(float(ldif_value)) + " "
+                ldif_str = ldif_str[:-1] + "\n"
+
+                f.write(ldif_str)
+        return True
+
+    def saveLDIFForLargeVis(self, save_folder_path):
+        if save_folder_path[-1] != "/":
+            save_folder_path += "/"
+
+        os.makedirs(save_folder_path)
+
+        self.saveLDIFList(self.train_image_ldif_list,
+                          save_folder_path + "train_image_ldif.txt")
+        self.saveLDIFList(self.train_sdf_ldif_list,
+                          save_folder_path + "train_sdf_ldif.txt")
+        self.saveLDIFList(self.train_image_ldif_list + self.train_sdf_ldif_list,
+                          save_folder_path + "train_image_sdf_ldif.txt")
+
+        self.saveLDIFList(self.val_image_ldif_list,
+                          save_folder_path + "val_image_ldif.txt")
+        self.saveLDIFList(self.val_sdf_ldif_list,
+                          save_folder_path + "val_sdf_ldif.txt")
+        self.saveLDIFList(self.val_image_ldif_list + self.val_sdf_ldif_list,
+                          save_folder_path + "val_image_sdf_ldif.txt")
+
+        self.saveLDIFList(self.train_image_ldif_list + self.val_image_ldif_list,
+                          save_folder_path + "train_val_image_ldif.txt")
+        self.saveLDIFList(self.train_sdf_ldif_list + self.val_sdf_ldif_list,
+                          save_folder_path + "train_val_sdf_ldif.txt")
+        self.saveLDIFList(self.train_image_ldif_list + self.train_sdf_ldif_list +
+                          self.val_image_ldif_list + self.val_sdf_ldif_list,
+                          save_folder_path + "train_val_image_sdf_ldif.txt")
+        return True
 
