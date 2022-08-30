@@ -35,7 +35,7 @@ class Detector(object):
             name = log_dict['name']
             log_save_path = valid_path + name + "/"
             os.makedirs(log_save_path, exist_ok=True)
-            return True
+        return True
 
     def loadDevice(self):
         device = self.config['device']['device']
